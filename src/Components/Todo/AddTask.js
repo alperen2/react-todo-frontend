@@ -13,20 +13,18 @@ import {
 
 import "antd/dist/antd.css";
 import "../../App.css";
-import config from '../../config'
+import config from "../../config";
 
 const { TextArea } = Input;
 
-
 const AddTask = props => {
-  const [visibility, setVisibility] = useState(false);
   return (
     <>
       <Row type="flex" justify="end" style={{ marginBottom: 10 }}>
         <Col>
           <Button
             onClick={() => {
-              setVisibility(true);
+              props.setVisibility(true);
             }}
           >
             <Icon type="plus" />
@@ -36,15 +34,16 @@ const AddTask = props => {
       </Row>
       <Modal
         footer={null}
-        onCancel={() => setVisibility(false)}
+        onCancel={() => props.setVisibility(false)}
         cancelText="Close"
         okText="Add"
-        visible={visibility}
+        visible={props.visibility}
         title="Add Task"
       >
         <WrappedAddTaskForm
           update={newTasks => props.updateTasks(newTasks)}
-          closePanel={() => setVisibility(false)}
+          closePanel={() => props.setVisibility(false)}
+          selectedDate={props.selectedDate}
         />
       </Modal>
     </>
@@ -53,7 +52,6 @@ const AddTask = props => {
 
 const AddTaskForm = props => {
   const { getFieldDecorator } = props.form;
-
   return (
     <>
       <Form
@@ -81,7 +79,6 @@ const AddTaskForm = props => {
           });
         }}
       >
-
         <Row gutter={[8, 8]}>
           <Col span={24}>
             <Form.Item label="Title">
@@ -95,7 +92,8 @@ const AddTaskForm = props => {
           <Col span={10}>
             <Form.Item label="Due date">
               {getFieldDecorator("due_date", {
-                rules: [{ required: true, message: "Due date is required" }]
+                rules: [{ required: true, message: "Due date is required" }],
+                initialValue: props.selectedDate
               })(<DatePicker id="due_date" format={config.DATEFORMAT} />)}
             </Form.Item>
           </Col>
